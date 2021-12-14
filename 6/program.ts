@@ -1,4 +1,4 @@
-//Načtení dat ze souboru a rozdělení do pole čísel podle řádků
+//Načtení dat ze souboru a rozdělení do pole čísel podle čárek
 const input = await Deno.readTextFile("./input.txt");
 const data = input.split(",").map(v => parseInt(v.trim()));
 
