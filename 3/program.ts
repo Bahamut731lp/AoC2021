@@ -89,9 +89,6 @@ const PodporaZivota = (data: number[][], maticeVyskytu:IVyskyty[]) => {
         }
     }
 
-    console.log(maticeVyskytu);
-    console.table({miraTvorbyKysliku, miraLikvidaceOxidu});
-
     const tvorbaKysliku = parseInt(miraTvorbyKysliku.flat().join(""), 2);
     const likvidaceOxidu = parseInt(miraLikvidaceOxidu.flat().join(""), 2);
 
@@ -100,8 +97,6 @@ const PodporaZivota = (data: number[][], maticeVyskytu:IVyskyty[]) => {
 
 const { gamma, epsilon } = DiagnostickeMiry(PoctyBitu(Transpozice(data)), true);
 console.table({ gamma, epsilon, spotreba: Number(gamma) * Number(epsilon)});
-
-console.log(PoctyBitu(data));
 
 const { tvorbaKysliku, likvidaceOxidu} = PodporaZivota(data, PoctyBitu(Transpozice(data)))
 console.table({ tvorbaKysliku, likvidaceOxidu, podporaZivota: tvorbaKysliku * likvidaceOxidu});
