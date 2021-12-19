@@ -34,6 +34,19 @@ class HeightMap {
 
         return this.matice[x][y];
     }
+
+    /**
+     * Hledá pánev v minimu
+     * @param x Souřadnice x minima
+     * @param y Souřadnice y minima
+     */
+    public panev(x: number, y: number) {
+        const bodLevo = this.bod(x - 1, y);
+        const bodPravo = this.bod(x + 1, y);
+        const bodDole = this.bod(x, y - 1);
+        const bodNahore = this.bod(x, y + 1);
+        
+    }
 }
 
 export default HeightMap;
