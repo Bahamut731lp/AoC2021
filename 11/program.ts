@@ -1,64 +1,56 @@
 //Načtení dat ze souboru
-const input = await Deno.readTextFile("./sample.txt");
+const input = await Deno.readTextFile("./input.txt");
 
 let data = input.trim().split("\n").map(v => v.trim().split("").map(n => parseInt(n)));
-const flashedMaskTemplate: boolean[][] = new Array(data.length).fill(new Array(data[0].length).fill(false));
 
 let flashCounter = 0;
-let flashedMask = flashedMaskTemplate;
+let flashedOctos = new Set();
 
 const exists = (x: number, y: number) => {
-    return !!data?.[x]?.[y];
+    return (typeof data[x] !== "undefined") && (typeof data[x][y] !== "undefined");
 }
 
-const flash = (x: number, y: number) => {
+const increase = (x: number, y: number) => {
+    if (!exists(x, y)) return;
+    if (flashedOctos.has(`${x}:${y}`)) return;
+
+    data[x][y]++;
+    if (data[x][y] <= 9) return;
+
     data[x][y] = 0;
-    flashedMask[x][y] = true;
-    flashCounter += 1;
+    flashedOctos.add(`${x}:${y}`);
+    flashCounter++;
 
-    const rozdily = [
-        [1, 0], 
-        [1, 1], 
-        [0, 1], 
-        [-1, 1], 
-        [-1, 0], 
-        [-1 -1], 
-        [0, -1],
-        [1, -1]
-    ];
+    for (let row = -1; row <= 1; row++) {
+        for (let column = -1; column <= 1; column++) {
+            if (!row && !column) continue;
 
-    for (let okoli = 0; okoli < rozdily.length; okoli++) {
-        const delty = rozdily[okoli];
-        const deltaX = delty.pop() || 0;
-        const deltaY = delty.pop() || 0;
+            increase(x + row, y + column);
+        }
 
-        if (exists(x + deltaX, y + deltaY)) {
-            data[x + deltaX][y + deltaY] += 1;
-        };
     }
 
 }
 
-for (let step = 0; step < 100; step++) {
-    //Resetování masky pro probliknuté chobotničky
-    flashedMask = flashedMaskTemplate;
+let step = 0;
+while (true) {
+    if (step + 1 == 100) {
+        console.log(flashCounter);
+    }
+
+    step++;
+    //Resetování množiny probliknutých chobotniček
+    flashedOctos = new Set();
 
     //Zvednutí hodnoty energie chobotniček o 1
     for (let row = 0; row < data.length; row++) {
         for (let octopus = 0; octopus < data[row].length; octopus++) {
-            data[row][octopus] += 1;
+            increase(row, octopus);
         }
     }
 
-    //Proč do samostatného loopu?
-    //Potřebuji totiž, aby začali blikat až v moment, co je celá matice zvětšena o 1
-    for (let row = 0; row < data.length; row++) {
-        for (let octopus = 0; octopus < data[row].length; octopus++) {
-            if (data[row][octopus] > 9) flash(row, octopus);
-        }
-    }
-
-    await Deno.writeTextFile("./file.txt", `${JSON.stringify(data)}\n`, { append: true });
+    if (flashedOctos.size === (data.length * data[0].length)) {
+        console.log(step);
+        break;
+    };
 }
-
-console.log(flashCounter);
